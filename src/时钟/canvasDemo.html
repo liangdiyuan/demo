@@ -1,0 +1,92 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style type="text/css">
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        body{
+            background-color: #000;
+        }
+        #mycanvas{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-top: -250px;
+            margin-left: -250px;
+            border: 1px solid #000;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="mycanvas" width="500" height="500"></canvas>
+    <script>
+
+        function init(){
+            let mc = document.getElementById("mycanvas");
+            console.log(mc);
+            let ctx = mc.getContext("2d");
+            ctx.lineWidth = 15;
+            ctx.strokeStyle = "#00FFFF";
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "#fff";
+            
+            setInterval(() => {
+                render(ctx, mc.width, mc.height);
+            }, 20);
+           
+        }
+
+        function angleToRadians(angle){
+            return angle * Math.PI / 180;
+        }
+
+        function render(ctx, width, height){
+            let date = new Date(),
+                dateStr = date.toLocaleDateString().replace(/\//g, "-"),
+                h = date.getHours(),
+                m = date.getMinutes(),
+                s = date.getSeconds(),
+                ms = date.getMilliseconds(),
+                twelveHour = h >= 12 ? h - 12 : h;
+
+            let radgrad = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, 120);
+            radgrad.addColorStop(0, '#03303a');
+            radgrad.addColorStop(1, '#000');
+            ctx.fillStyle = radgrad;
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.beginPath();
+            ctx.arc(width / 2, height / 2, 150, angleToRadians(-90), angleToRadians( (s + ms / 1000) * 6 - 90 ) );
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(width / 2, height / 2, 180, angleToRadians(-90), angleToRadians( (m + s / 60) * 6 - 90 ) );
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(width / 2, height / 2, 210, angleToRadians(-90), angleToRadians( (twelveHour + m / 60) * 30 - 90 ) );
+            ctx.stroke();
+
+            h = ("0" + h).substr(-2);
+            m = ("0" + m).substr(-2);
+            s = ("0" + s).substr(-2);
+            ms = ("00" + ms).substr(-3);
+
+            ctx.font="30px Arial";
+            ctx.textAlign="center";
+            ctx.fillStyle = "#00FFFF";
+            ctx.fillText(dateStr ,width / 2, 230);
+            ctx.fillText(h + "：" + m + "：" + s , width / 2, 280);
+        }
+
+        init();
+        
+    </script>
+</body>
+</html>
